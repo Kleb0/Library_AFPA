@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil</title>
-</head>
-<body>
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Accueil - Library_AFPA
+{% endblock %}
+
+{% block body %}
     <h1>Bienvenue sur votre page d'accueil Symfony !</h1>
     <p>{{ message }}</p>
-</body>
-</html>
+{% endblock %}
