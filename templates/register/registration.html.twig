@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/registration.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="registration-container">
+    <h1>Inscription</h1>
+    
+    {# Afficher les erreurs globales du formulaire #}
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger">
+            Veuillez corriger les erreurs ci-dessous avant de soumettre le formulaire.
+        </div>
+    {% endif %}
+
+    {# Démarrage du formulaire Symfony #}
+    {{ form_start(form) }}
+    
+    {# Rendu des champs du formulaire avec les erreurs #}
+    <div class="form-group">
+        {{ form_label(form.nom) }}
+        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.nom) }} {# Affiche les erreurs spécifiques au champ #}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.prenom) }}
+        {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.prenom) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.dateNaissance) }}
+        {{ form_widget(form.dateNaissance, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.dateNaissance) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.email) }}
+        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.email) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.telephone) }}
+        {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.telephone) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.adresse) }}
+        {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.adresse) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.codePostal) }}
+        {{ form_widget(form.codePostal, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.codePostal) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.ville) }}
+        {{ form_widget(form.ville, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.ville) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.password) }}
+        {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.password) }}
+    </div>
+
+    {# Champ pour la photo de profil #}
+    <div class="form-group">
+        {{ form_label(form.imageProfil) }}
+        {{ form_widget(form.imageProfil, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.imageProfil) }}
+    </div>
+    
+    {# Bouton de soumission #}
+    <button type="submit" class="btn btn-primary">S'inscrire</button>
+    
+    {{ form_end(form) }}
+</div>
+{% endblock %}

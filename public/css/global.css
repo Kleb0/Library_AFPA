@@ -1,0 +1,10 @@
+.main_block {
+    position: relative;
+    flex: 1; 
+    padding: 20px; 
+    background-color: #9c3737; 
+    display: flex;
+    flex-direction: column;
+
+}
+

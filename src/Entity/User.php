@@ -3,11 +3,18 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity]
 #[ORM\Table(name: "users")]
-class User
+#[UniqueEntity(fields: ["email"], message: "Cet email existe déjà.")]
+#[UniqueEntity(fields: ["nom"], message: "Ce nom est déjà utilisé.")]
+#[UniqueEntity(fields: ["adresse"], message: "Cette adresse est déjà utilisée.")]
+
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -56,6 +63,36 @@ class User
     #[ORM\Column(type: "integer", nullable: true)]
     private $roleId;
 
+    // Méthodes de UserInterface
+    public function getRoles(): array
+    {
+        // Retourne un tableau contenant les rôles de l'utilisateur
+        return ['ROLE_USER'];
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function getSalt(): ?string
+    {
+        // Si vous utilisez bcrypt ou sodium, le sel n'est pas nécessaire
+        return null;
+    }
+
+    public function getUsername(): string
+    {
+        // Utiliser l'email comme identifiant
+        return $this->email;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Effacer les données sensibles (par exemple, les mots de passe en clair)
+    }
+
+    // Getters et setters existants
     public function getId(): ?int
     {
         return $this->id;
@@ -107,11 +144,6 @@ class User
         $this->email = $email;
 
         return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
     }
 
     public function setPassword(string $password): self
@@ -203,5 +235,12 @@ class User
         $this->roleId = $roleId;
 
         return $this;
+    }
+
+    // Méthode pour retourner l'identifiant principal de l'utilisateur
+    public function getUserIdentifier(): string
+    {
+        // Utiliser l'email comme identifiant principal
+        return $this->email;
     }
 }

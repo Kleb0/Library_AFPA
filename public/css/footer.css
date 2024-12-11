@@ -1,25 +1,21 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%; /* Assurez-vous que le html et le body occupent toute la hauteur */
+    height: 100vh; 
     display: flex;
-    flex-direction: column; /* Permet de placer les éléments en colonne */
+    flex-direction: column; 
 }
-
-main {
-    flex: 1; /* Prend tout l'espace disponible entre la navbar et le footer */
-}
-
 
 .footer {
     background-color: #070707;
     color: #dde1e6;
     padding: 20px 0;
     text-align: center;
-    position: relative;
-    bottom: 0;
+    position: relative; 
+    top: 0%; 
     width: 100%;
 }
+
 
 .footer-container {
     display: flex;
