@@ -4,14 +4,24 @@
         <div class="navbar-links">
             <a href="{{ path('app_home') }}" class="navbar-link">Accueil</a>
 
-            {%if app.user %}
+            {% if app.user %}
                 <span class="navbar-text">Bienvenue, {{ app.user.prenom }}</span>
-                <a href ="{{ path('app_account') }}" class="navbar-link">Mon compte</a>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <span class="navbar-text">Vous êtes administrateur</span>
+                    <a href="{{ path('admin_users_management') }}" class="navbar-link">Gestion utilisateurs</a>
+                {% endif %}
+
+                <a href="{{ path('app_account') }}" class="navbar-link">Mon compte</a>
                 <a href="{{ path('app_logout') }}" class="navbar-link">Déconnexion</a>
+
+                {% if app.user.imageProfil %}
+                    <img src="{{ asset('uploads/profile_images/' ~ app.user.imageProfil) }}" alt="Photo de profil" class="navbar-profile-image">
+                {% endif %}
             {% else %}
                 <a href="{{ path('app_login') }}" class="navbar-link">Connexion</a>
+                <a href="{{ path('app_register') }}" class="navbar-link">Inscription</a>
             {% endif %}
-            <a href="{{ path('app_register') }}" class="navbar-link">Inscription</a>
         </div>
     </div>
 </nav>

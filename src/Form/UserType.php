@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UserType extends AbstractType
 {
@@ -60,7 +61,21 @@ class UserType extends AbstractType
             ->add('imageProfil', FileType::class, [
                 'label' => 'Photo de profil',
                 'required' => false,
-                'mapped' => false, 
+                'mapped' => false, // Non lié directement à l'entité User
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG, GIF).',
+                    ])
+                ],
+                'attr' => [
+                    'accept' => 'image/jpeg,image/png,image/gif',
+                ],
             ]);
     }
 
@@ -71,4 +86,3 @@ class UserType extends AbstractType
         ]);
     }
 }
-

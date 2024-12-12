@@ -14,10 +14,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: ["nom"], message: "Ce nom est déjà utilisé.")]
 #[UniqueEntity(fields: ["adresse"], message: "Cette adresse est déjà utilisée.")]
 
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private $id;
 
@@ -55,6 +55,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $telephone;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\File(
+        maxSize: "2M",
+        mimeTypes: ["image/jpeg", "image/png", "image/gif"],
+        mimeTypesMessage: "Veuillez télécharger une image valide (JPEG, PNG, GIF)."
+    )]
+
     private $imageProfil;
 
     #[ORM\Column(type: "string", length: 50, nullable: true)]
@@ -63,11 +69,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "integer", nullable: true)]
     private $roleId;
 
+    #[ORM\COLUMN(type:"integer", nullable:true)]
+    private ?int $customId = null;
+
+
+
+
     // Méthodes de UserInterface
     public function getRoles(): array
     {
-        // Retourne un tableau contenant les rôles de l'utilisateur
-        return ['ROLE_USER'];
+        $roles = ['ROLE_USER'];
+
+        if($this->rolename ==='Admin')
+        {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        return array_unique($roles);
+
     }
 
     public function getPassword(): ?string
@@ -101,6 +120,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getNom(): ?string
     {
         return $this->nom;
+    }
+
+        public function setId(int $id) : self
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function setNom(string $nom): self
@@ -243,4 +268,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // Utiliser l'email comme identifiant principal
         return $this->email;
     }
+
+    public function getCustomId(): ?int
+    {
+        return $this->customId;
+    }
+
+    public function setCustomId(?int $customId): self
+    {
+        $this->customId = $customId;
+
+        return $this;
+    }
+
+
 }

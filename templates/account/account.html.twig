@@ -1,11 +1,23 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/account.css') }}">
+{% endblock %}
+
 {% block body %}
     <h1>Mon compte</h1>
-    <p>Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}.</p>
-    <p>Email : {{ app.user.email }}</p>
-    <p>Adresse : {{ app.user.adresse }}</p>
-    <p>Ville : {{ app.user.ville }}</p>
-    <p>Code postal : {{ app.user.codePostal }}</p>
-    <p>Rôle : {{ app.user.rolename }}</p>
+    <div class="profile-container">
+        {% if app.user.imageProfil %}
+            <img src="{{ asset('uploads/profile_images/' ~ app.user.imageProfil) }}" alt="Photo de profil" class="profile-image">
+        {% else %}
+            <p>Aucune image de profil.</p>
+        {% endif %}
+        <p>Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}.</p>
+        <p>Email : {{ app.user.email }}</p>
+        <p>Adresse : {{ app.user.adresse }}</p>
+        <p>Ville : {{ app.user.ville }}</p>
+        <p>Code postal : {{ app.user.codePostal }}</p>
+        <p>Rôle : {{ app.user.rolename }}</p>
+    </div>
 {% endblock %}

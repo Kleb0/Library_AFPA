@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
 use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -17,7 +20,8 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        SluggerInterface $slugger
     ): Response {
         // Créer une nouvelle instance de l'entité User
         $user = new User();
@@ -28,6 +32,45 @@ class RegistrationController extends AbstractController
 
         // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
+
+            // Gestion de l'image
+            $imageFile = $form->get('imageProfil')->getData();
+
+            if($imageFile)
+            {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('profil_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                $user->setImageProfil($newFilename);
+            }
+
+
+            $roleRepository = $entityManager->getRepository(Role::class);
+            $role = $roleRepository->findOneBy(['roleId' => '2']);
+
+            if($role)
+            {
+                $user->setRoleId($role->getRoleId());
+                $user->setRolename($role->getRoleName());
+            }
+
+            //calculate and define the user Id and custom Id
+            $userCount = $entityManager->getRepository(User::class)->count([]);
+            $customID = $userCount + 1;
+            $user->setCustomId($customID);
+            $user->setId($customID);
+
+
             // Hashage du mot de passe
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
