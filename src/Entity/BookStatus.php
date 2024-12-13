@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: BookStatusRepository::class)]
+#[ORM\Entity]
 class BookStatus
 {
     // Constants for predefined statuses

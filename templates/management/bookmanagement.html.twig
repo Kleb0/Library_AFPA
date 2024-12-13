@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Livres{% endblock %}
+
+    {% block body %}
+    <div class="container">
+        <h1>Gestion des Livres</h1>
+        <table class="table">
+
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Résumé</th>
+            <th>Image</th>
+            <th>Catégories</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+                <tr>
+                    <td>{{ book.id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.summary }}</td>
+                    <td>
+                        {% if book.image %}
+                            <img src="{{ book.image }}" alt="{{ book.title }}" width="50" height="50">
+                        {% else %}
+                            Pas d'image
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for category in book.categories %}
+                            {{ category.categoryName }}{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            Aucune catégorie
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{{ path('admin_delete_book', {'id': book.id}) }}" class="btn btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Aucun livre trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+   <div class="mt-4">
+    <h2>Ajouter un Livre</h2>
+    {{ form_start(form) }}
+    <div class="form-group">
+        {{ form_row(form.title) }}
+        {{ form_row(form.author) }}
+        {{ form_row(form.status) }}
+        {{ form_row(form.isAvailable) }}
+    </div>
+    {{ form_end(form) }}
+</div>
+
+</div>
+{% endblock %}

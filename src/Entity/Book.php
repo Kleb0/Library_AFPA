@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -23,8 +26,73 @@ class Book
     #[ORM\JoinColumn(nullable: false)]
     private $status;
 
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $summary = null;
+
+    public function getSummary(): ?string
+    {
+        return $this->summary;
+    }
+
+    public function setSummary(?string $summary): self
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+
     #[ORM\Column(type: 'boolean')]
     private $isAvailable = true;
+
+
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image = null;
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    #[ORM\ManyToMany(targetEntity: BookCategory::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: 'book_book_category')] // Nom de la table de liaison (facultatif)
+    private Collection $categories;
+
+    public function __construct()
+    {
+        $this->categories = new ArrayCollection();
+    }
+
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(BookCategory $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(BookCategory $category): self
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
 
     public function getId(): ?int
     {
@@ -91,4 +159,36 @@ class Book
     {
         $this->isAvailable = true;
     }
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $categoryIdList = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $categoryNameList = null;
+
+    public function getCategoryIdList(): ?string
+    {
+        return $this->categoryIdList;
+    }
+
+    public function setCategoryIdList(?string $categoryIdList): self
+    {
+        $this->categoryIdList = $categoryIdList;
+
+        return $this;
+    }
+
+    public function getCategoryNameList(): ?string
+    {
+        return $this->categoryNameList;
+    }
+
+    public function setCategoryNameList(?string $categoryNameList): self
+    {
+        $this->categoryNameList = $categoryNameList;
+
+        return $this;
+    }
+
+    
 }
