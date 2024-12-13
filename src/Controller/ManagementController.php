@@ -77,6 +77,8 @@ class ManagementController extends AbstractController
         // Rediriger vers la page de gestion des utilisateurs
         return $this->redirectToRoute('admin_users_management');
     }
+
+    
     #[Route('/admin/books-management', name: 'admin_books_management')]
     public function booksManagement(Request $request, BookRepository $bookRepository, EntityManagerInterface $entityManager): Response
     {
@@ -85,104 +87,100 @@ class ManagementController extends AbstractController
         }
 
         $books = $bookRepository->findAll();
-
-        // Création d'un formulaire pour ajouter un livre
         $book = new Book();
+        $category = new BookCategory(); // Nouvelle catégorie
 
-        //formulaire d'ajout de livre
+            // Formulaire pour ajouter un livre
+            $bookForm = $this->createFormBuilder($book)
+            ->add('title', TextType::class, ['label' => 'Titre'])
+            ->add('author', TextType::class, ['label' => 'Auteur'])
+            ->add('status', EntityType::class, [
+                'class' => BookStatus::class,
+                'choice_label' => 'name',
+                'label' => 'Statut',
+            ])
+            ->add('isAvailable', CheckboxType::class, [
+                'mapped' => false, 
+                'required' => false,                
+                'label' => 'Disponible',
+            ])
+            
+            ->add('summary', TextType::class, ['label' => 'Résumé', 'required' => false])
+            ->add('image', FileType::class, [
+                'label' => 'Image (fichier)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => ['image/jpeg', 'image/jpg', 'image/png'],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPG, JPEG, PNG).',
+                    ]),
+                ],
+            ])
+            ->add('categories', EntityType::class, [
+                'class' => BookCategory::class,
+                'choice_label' => 'categoryName',
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Catégories',
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Ajouter', 'attr' => ['class' => 'btn btn-primary']])
+            ->getForm();
 
-        $form = $this->createFormBuilder($book)
-        ->add('title', TextType::class, [
-            'label' => 'Titre',
-        ])
-        ->add('author', TextType::class, [
-            'label' => 'Auteur',
-        ])
-        ->add('status', EntityType::class, [
-            'class' => BookStatus::class,
-            'choice_label' => 'name',
-            'label' => 'Statut',
-        ])
-        ->add('isAvailable', CheckboxType::class, [
-            'label' => 'Disponible',
-            'required' => false,
-        ])
-        ->add('summary', TextType::class, [ // Ajout du résumé
-            'label' => 'Résumé',
-            'required' => false,
-        ])
-        ->add('image', FileType::class, [
-            'label' => 'Image (fichier)',
-            'mapped' => false, // Ce champ n'est pas lié directement à l'entité
-            'required' => false,
-            'constraints' => [
-                new File([
-                    'mimeTypes' => [
-                        'image/jpeg',
-                        'image/jpg',
-                        'image/png',
-                    ],
-                    'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPG, JPEG, PNG).',
-                ]),
-            ],
-        ])
-        ->add('categories', EntityType::class, [
-            'class' => BookCategory::class,
-            'choice_label' => 'categoryName',
-            'multiple' => true, // Permet de sélectionner plusieurs catégories
-            'expanded' => true, // Affiche des cases à cocher au lieu d'une liste déroulante
-            'label' => 'Catégories',
-        ])
-        ->add('save', SubmitType::class, [
-            'label' => 'Ajouter',
-            'attr' => ['class' => 'btn btn-primary'],
-        ])
-       
-        
-        ->add('save', SubmitType::class, [
-            'label' => 'Ajouter',
-            'attr' => ['class' => 'btn btn-primary'],
-        ])
-        ->getForm();
+            // Formulaire pour créer une catégorie
+            $categoryForm = $this->createFormBuilder($category)
+            ->add('categoryName', TextType::class, [
+                'label' => 'Nom de la catégorie',
+                'mapped' => true
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Créer une catégorie',
+                'attr' => ['class' => 'btn btn-secondary'],
+            ])
+            ->getForm();
 
+        // Traitement des formulaires
+        $bookForm->handleRequest($request);
+        $categoryForm->handleRequest($request);
 
-       // Traitement du formulaire
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($bookForm->isSubmitted() && $bookForm->isValid()) {
+            
             // Gestion de l'image
-            $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                // Générer un nom unique pour l'image
+            $imageFile = $bookForm->get('image')->getData();        
+            if ($imageFile) 
+            {
                 $newFilename = uniqid() . '.' . $imageFile->guessExtension();
-
-                // Déplacer le fichier dans le répertoire configuré
-                $imageFile->move(
-                    $this->getParameter('book_image_directory'),
-                    $newFilename
-                );
-
-                // Définir le chemin de l'image dans l'entité Book
+                $imageFile->move($this->getParameter('book_image_directory'), $newFilename);
                 $book->setImage('/uploads/book_images/' . $newFilename);
             }
 
-            // Ajout des catégories au livre
-            $categories = $form->get('categories')->getData();
+            $totalBooks = $bookRepository->count([]);
+            $book->setCustomId($totalBooks + 1);
+
+            // Ajouter les catégories au livre
+            $categories = $bookForm->get('categories')->getData();
             foreach ($categories as $category) {
                 $book->addCategory($category);
             }
 
-            // Sauvegarder l'entité Book
             $entityManager->persist($book);
             $entityManager->flush();
 
-            // Rediriger vers la gestion des livres
             return $this->redirectToRoute('admin_books_management');
         }
 
-         // Rendu de la page
+        if ($categoryForm->isSubmitted() && $categoryForm->isValid())
+        {
+            $entityManager->persist($category);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('admin_books_management');
+        }
+
         return $this->render('management/bookmanagement.html.twig', [
             'books' => $books,
-            'form' => $form->createView(),
+            'bookForm' => $bookForm->createView(),
+            'categoryForm' => $categoryForm->createView(),
         ]);
     }
 

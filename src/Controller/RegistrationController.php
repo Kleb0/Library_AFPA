@@ -47,7 +47,8 @@ class RegistrationController extends AbstractController
                         $this->getParameter('profil_directory'),
                         $newFilename
                     );
-                } catch (FileException $e) {
+                }
+                catch (FileException $e) {
                     // ... handle exception if something happens during file upload
                 }
 

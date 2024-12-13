@@ -26,6 +26,9 @@ class Book
     #[ORM\JoinColumn(nullable: false)]
     private $status;
 
+    #[ORM\Column(type: 'integer', unique: true, nullable: false)]
+    private $customId;
+
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $summary = null;
@@ -93,12 +96,6 @@ class Book
 
         return $this;
     }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
@@ -189,6 +186,28 @@ class Book
 
         return $this;
     }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+
+
+    public function getCustomId(): ?int
+    {
+        return $this->customId;
+    }
+
+    public function setCustomId(int $customId): self
+    {
+        $this->customId = $customId;
+
+        return $this;
+    }
+
 
     
 }
