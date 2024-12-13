@@ -14,6 +14,8 @@
             <th>Auteur</th>
             <th>Résumé</th>
             <th>Catégories</th>
+            <th>État</th>
+            <th>Disponible?</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -31,9 +33,14 @@
                             Aucune catégorie
                         {% endfor %}
                     </td>
+                    <td>{{ book.status.name ?? 'Non spécifié' }}</td>
+                    <td>{{ book.isAvailable ? 'Oui' : 'Non' }}</td>
                     <td>
-                        <a href="{{ path('admin_delete_book', {'id': book.customId}) }}" class="btn btn-danger">Supprimer</a>
+                        <a href="{{ path('admin_delete_book', {'customId': book.customId}) }}" class="btn btn-danger">Supprimer</a>
+                        <a class="btn btn-warning">Modifier</a>
+                        <a class="btn btn-info">Voir</a>
                     </td>
+
                 </tr>
             {% else %}
                 <tr>
@@ -57,7 +64,7 @@
         {{ form_row(bookForm.categories) }}
     </div>
     {{ form_end(bookForm) }}
-</div>
+    </div>
 
 <div class="mt-4">
     <h2>Créer une nouvelle catégorie</h2>

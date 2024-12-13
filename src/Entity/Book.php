@@ -24,7 +24,7 @@ class Book
 
     #[ORM\ManyToOne(targetEntity: BookStatus::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
-    private $status;
+    private ?BookStatus $status = null;
 
     #[ORM\Column(type: 'integer', unique: true, nullable: false)]
     private $customId;
@@ -66,6 +66,7 @@ class Book
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getCategories(): Collection
@@ -85,6 +86,52 @@ class Book
     public function removeCategory(BookCategory $category): self
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    #[ORM\ManyToMany(targetEntity: Comment::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: 'book_comment')] // Spécifie le nom de la table de liaison
+    private Collection $comments;
+
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // Set the owning side to null (unless already changed)
+            if ($comment->getBook() === $this) {
+                $comment->setBook(null);
+            }
+        }
+
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    private ?string $bookCondition = null;
+
+    public function getBookCondition(): ?string
+    {
+        return $this->bookCondition;
+    }
+
+    public function setBookCondition(?string $bookCondition): self
+    {
+        $this->bookCondition = $bookCondition;
 
         return $this;
     }
