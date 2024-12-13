@@ -134,8 +134,12 @@ class ManagementController extends AbstractController
             'placeholder' => 'Choisir un état',
             'required' => true,
         ])
+        // ->add('bookCondition', TextType::class, [ // Ajout du champ
+        //     'label' => 'État du livre',
+        //     'required' => false,
+        // ])f
         ->add('save', SubmitType::class, [
-            'label' => 'Ajouter',
+            'label' => 'Ajouter le livre',
             'attr' => ['class' => 'btn btn-primary'],
         ])
         ->getForm();
@@ -170,8 +174,8 @@ class ManagementController extends AbstractController
             $book->setImage('/uploads/book_images/' . $newFilename);
         }
 
-        //Gestion de la condition du livre
-        $book->setBookCondition($bookForm->get('bookCondition')->getData());
+        // //Gestion de la condition du livre
+        // $book->setBookCondition($bookForm->get('bookCondition')->getData());
 
         $totalBooks = $bookRepository->count([]);
         $book->setCustomId($totalBooks + 1);
