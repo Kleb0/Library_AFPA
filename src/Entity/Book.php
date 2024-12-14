@@ -63,10 +63,15 @@ class Book
     #[ORM\JoinTable(name: 'book_book_category')] // Nom de la table de liaison (facultatif)
     private Collection $categories;
 
+    #[ORM\ManyToMany(targetEntity: BorrowedBook::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: 'book_borrowed_book')] // Table de liaison
+    private Collection $borrowedBooks;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->borrowedBooks = new ArrayCollection();
     }
 
     public function getCategories(): Collection
@@ -117,6 +122,27 @@ class Book
                 $comment->setBook(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBorrowedBooks(): Collection
+    {
+        return $this->borrowedBooks;
+    }
+
+    public function addBorrowedBook(BorrowedBook $borrowedBook): self
+    {
+        if (!$this->borrowedBooks->contains($borrowedBook)) {
+            $this->borrowedBooks->add($borrowedBook);
+        }
+
+        return $this;
+    }
+
+    public function removeBorrowedBook(BorrowedBook $borrowedBook): self
+    {
+        $this->borrowedBooks->removeElement($borrowedBook);
 
         return $this;
     }

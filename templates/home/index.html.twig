@@ -7,4 +7,8 @@ Accueil - Library_AFPA
 {% block body %}
     <h1>Bienvenue sur votre page d'accueil Symfony !</h1>
     <p>{{ message }}</p>
+
+    <!-- Catalogue inclusion -->
+    {% include 'catalogue/catalogue.html.twig' %}
+    
 {% endblock %}

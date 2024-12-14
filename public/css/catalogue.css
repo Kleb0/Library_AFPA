@@ -1,0 +1,19 @@
+.Container-catalogue{
+    background-color: #00a2ff;
+    width: 80%;
+    margin-left: 10%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 250px; /* Limite la largeur des cartes */
+    margin: auto; /* Centre la carte horizontalement */
+}
+
+.hover-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); 
+}
