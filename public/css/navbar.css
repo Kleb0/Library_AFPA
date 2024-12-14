@@ -1,14 +1,14 @@
 .navbar {
     background-color: #19c97f;
     color: #ffffff;
-    padding: 40px 40px;
-    height: 200px;
+    padding: 20px 20px;
 }
 
 .navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-left:2%;
 }
 
 
@@ -49,8 +49,59 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    margin-left: 20px;
+    margin-left: 10px;
     object-fit: cover;
     border: 2px solid #ffffff;
+}
+
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-modal {
+    display: none; 
+    position: absolute;
+    top: 110%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffffff;
+    color: #000000;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    min-width: 200px;
+    text-align: left;
+}
+
+.profile-modal::before {
+    content: "";
+    position: absolute;
+    top: -20px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #ffffff transparent;
+    width: 0;
+    height: 0;
+    z-index: 1; 
+}
+
+.profile-modal a {
+    display: block;
+    color: #19c97f;
+    text-decoration: none;
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+.profile-modal a:hover {
+    text-decoration: underline;
+}
+
+.profile-container:hover .profile-modal {
+    display: block; /* Afficher lorsque survolé */
 }
 

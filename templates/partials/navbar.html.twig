@@ -5,25 +5,44 @@
             <a href="{{ path('app_home') }}" class="navbar-link">Accueil</a>
 
             {% if app.user %}
-                <span class="navbar-text">Bienvenue, {{ app.user.prenom }}</span>
+
 
                 {% if is_granted('ROLE_ADMIN') %}
-                    <span class="navbar-text">Vous êtes administrateur</span>
                     <a href="{{ path('admin_users_management') }}" class="navbar-link">Gestion utilisateurs</a>
                     <a href="{{ path('admin_books_management') }}" class="navbar-link">Gestion Livres</a>
                     <a> Gestion salles de travail </a>
+                    <a> Gestion des abonnements </a>
                 {% endif %}
 
                 <a href="{{ path('app_account') }}" class="navbar-link">Mon compte</a>
                 <a href="{{ path('app_logout') }}" class="navbar-link">Déconnexion</a>
 
                 {% if app.user.imageProfil %}
-                    <img src="{{ asset('uploads/profile_images/' ~ app.user.imageProfil) }}" alt="Photo de profil" class="navbar-profile-image">
+                    <div class="profile-container">
+                        <img src="{{ asset('uploads/profile_images/' ~ app.user.imageProfil) }}" 
+                            alt="Photo de profil" 
+                            class="navbar-profile-image">
+                            
+                        <!-- Modal -->
+                        <div class="profile-modal">
+                            <p>Bonjour, {{ app.user.prenom }}</p>
+                            <a href="{{ path('app_account') }}">Votre compte</a>
+                            <a>Vos livres</a>
+                            <a>Votre abonnement</a>
+                        </div>
+                    </div>
                 {% endif %}
+
+
             {% else %}
                 <a href="{{ path('app_login') }}" class="navbar-link">Connexion</a>
                 <a href="{{ path('app_register') }}" class="navbar-link">Inscription</a>
             {% endif %}
-        </div>
+
+        
+                    
+
+           
+            </div>
     </div>
 </nav>

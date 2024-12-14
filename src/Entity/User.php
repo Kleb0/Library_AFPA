@@ -7,6 +7,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: "users")]
@@ -61,6 +63,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         mimeTypesMessage: "Veuillez télécharger une image valide (JPEG, PNG, GIF)."
     )]
 
+    
+
     private $imageProfil;
 
     #[ORM\Column(type: "string", length: 50, nullable: true)]
@@ -73,6 +77,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $customId = null;
 
 
+    #[ORM\ManyToMany(targetEntity: Subscription::class, inversedBy: "users")]
+    #[ORM\JoinTable(name: "users_subscription")]
+    private Collection $subscriptions;
+
+    public function __construct()
+    {
+        $this->subscriptions = new ArrayCollection();
+    }
+
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscription $subscription): self
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions->add($subscription);
+            $subscription->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(Subscription $subscription): self
+    {
+        if ($this->subscriptions->removeElement($subscription)) {
+            $subscription->removeUser($this);
+        }
+
+        return $this;
+    }
+
+
+    public function setSubscription(?Subscription $subscription): self
+    {
+        $this->subscription = $subscription;
+
+        return $this;
+    }
 
 
     // Méthodes de UserInterface
@@ -280,6 +324,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    
 
 
 }
