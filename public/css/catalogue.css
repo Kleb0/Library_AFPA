@@ -4,8 +4,37 @@
     margin-left: 10%;
     padding: 20px;
     box-sizing: border-box;
+
 }
 
+.cards-container {
+    display: flex; /* Active le mode flexbox */
+    flex-wrap: wrap; /* Les cartes passent à une nouvelle ligne si nécessaire */
+    gap: 20px; /* Espacement uniforme entre les cartes */
+    justify-content: center; /* Centre les cartes horizontalement */
+    margin-top: 20px; /* Espacement avec le texte précédent */
+}
+
+.card-img-top {
+    width: 100%; /* L'image remplit toute la largeur */
+    height: 250px; /* Hauteur uniforme pour les images */
+    object-fit: cover; /* Coupe ou adapte l'image pour remplir l'espace */
+    border-bottom: 1px solid #ddd; /* Sépare visuellement l'image du contenu */
+}
+
+.card-body {
+    padding: 10px; /* Ajoute de l'espace dans le contenu */
+    text-align: center;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 10px 0;
+    text-overflow: ellipsis; /* Coupe les titres trop longs avec "..." */
+    white-space: nowrap;
+    overflow: hidden;
+}
 
 .hover-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;

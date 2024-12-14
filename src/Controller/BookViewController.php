@@ -9,7 +9,7 @@ use App\Repository\BookRepository;
 
 class BookViewController extends AbstractController
 {
-    #[Route('/admin/book-view/{customId}', name: 'book_view')]
+    #[Route('/book-view/{customId}', name: 'book_view')]
     public function bookView(int $customId, BookRepository $bookRepository): Response
     {
         // Récupérer le livre par ID

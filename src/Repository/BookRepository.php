@@ -78,5 +78,26 @@ class BookRepository extends ServiceEntityRepository
     
         return $nextId;
     }
-    
+
+    public function findRandomBooks(int $limit = 5): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        // Injection directe de la valeur de la limite dans la requête
+        $sql = 'SELECT * FROM book ORDER BY RAND() LIMIT ' . (int) $limit;
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+
+        // Mapper les résultats pour retourner des objets Book
+        $books = [];
+        foreach ($resultSet->fetchAllAssociative() as $row) {
+            $books[] = $this->getEntityManager()->getRepository(Book::class)->find($row['id']);
+        }
+
+        return $books;
+    }
+
+
+        
 }

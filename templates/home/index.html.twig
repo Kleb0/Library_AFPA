@@ -9,6 +9,6 @@ Accueil - Library_AFPA
     <p>{{ message }}</p>
 
     <!-- Catalogue inclusion -->
-    {% include 'catalogue/catalogue.html.twig' %}
+     {% include 'catalogue/catalogue.html.twig' with { books: books } %}
     
 {% endblock %}
