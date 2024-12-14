@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Abonnements{% endblock %}
+
+{% block body %}
+<h1>Choisissez votre abonnement</h1>
+
+<div class="subscriptions">
+    {% for subscription in subscriptions %}
+        <div class="subscription-card">
+            <h2>{{ subscription.name }}</h2>
+            <p>Prix : {{ subscription.price }} €</p>
+            <p>Type : {{ subscription.type }}</p>
+
+            {% if app.user.subscriptions.contains(subscription) %}
+                <a href="{{ path('app_unsubscribe') }}" class="btn btn-danger">Résilier cet abonnement</a>
+            {% else %}
+                {% if app.user.subscriptions|length > 0 %}
+                    <a href="{{ path('app_change_subscription', { id: subscription.id }) }}" class="btn btn-warning">Changer votre abonnement</a>
+                {% else %}
+                    <a href="{{ path('app_subscribe', { id: subscription.id }) }}" class="btn btn-primary">Choisir cet abonnement</a>
+                {% endif %}
+            {% endif %}
+
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+    .subscriptions {
+        display: flex;
+        gap: 20px;
+    }
+
+    .subscription-card {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
+</style>
+{% endblock %}

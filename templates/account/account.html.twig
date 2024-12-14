@@ -19,5 +19,15 @@
         <p>Ville : {{ app.user.ville }}</p>
         <p>Code postal : {{ app.user.codePostal }}</p>
         <p>Rôle : {{ app.user.rolename }}</p>
+
+        <h2>Votre abonnement</h2>
+        {% if app.user.subscriptions|length > 0 %}
+            {% for subscription in app.user.subscriptions %}
+                <p>{{ subscription.name }} ({{ subscription.type }}) - {{ subscription.price }} €</p>
+            {% endfor %}
+            <a href="{{ path('app_unsubscribe') }}" class="btn btn-danger">Résilier l'abonnement</a>
+        {% else %}
+            <p>Vous n'avez pas d'abonnement actif.</p>
+        {% endif %}
     </div>
 {% endblock %}
