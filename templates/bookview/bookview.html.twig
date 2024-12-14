@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Livre{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Détails du Livre</h1>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>{{ book.title }}</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Auteur :</strong> {{ book.author }}</p>
+            <p><strong>Résumé :</strong> {{ book.summary ? book.summary : 'Aucun résumé disponible.' }}</p>
+            <p><strong>Catégories :</strong>
+                {% for category in book.categories %}
+                    {{ category.categoryName }}{% if not loop.last %}, {% endif %}
+                {% else %}
+                    Aucune catégorie associée.
+                {% endfor %}
+            </p>
+            <p><strong>État :</strong> {{ book.status.name ?? 'Non spécifié' }}</p>
+            <p><strong>Disponible :</strong> {{ book.isAvailable ? 'Oui' : 'Non' }}</p>
+
+            {% if book.image %}
+                <div class="mt-4">
+                    <img src="{{ asset(book.image) }}" alt="Image du livre" class="img-fluid" />
+                </div>
+            {% endif %}
+        </div>
+        {# <div class="card-footer">
+            <a href="{{ path('admin_books_management') }}" class="btn btn-secondary">Retour à la liste</a>
+        </div> #}
+    </div>
+</div>
+{% endblock %}

@@ -7,7 +7,7 @@
         <h1>Gestion des Livres</h1>
         <table class="table">
 
-        <thead>
+        <thead class="table-dark">
         <tr>
             <th>ID</th>
             <th>Titre</th>
@@ -38,7 +38,7 @@
                     <td>
                         <a href="{{ path('admin_delete_book', {'customId': book.customId}) }}" class="btn btn-danger">Supprimer</a>
                         <a class="btn btn-warning">Modifier</a>
-                        <a class="btn btn-info">Voir</a>
+                        <a href="{{ path('book_view', {'customId': book.customId}) }}" class="btn btn-info">Voir</a>
                     </td>
 
                 </tr>

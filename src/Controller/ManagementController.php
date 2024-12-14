@@ -177,8 +177,8 @@ class ManagementController extends AbstractController
         // //Gestion de la condition du livre
         // $book->setBookCondition($bookForm->get('bookCondition')->getData());
 
-        $totalBooks = $bookRepository->count([]);
-        $book->setCustomId($totalBooks + 1);
+        $nextCustomId = $bookRepository->findNextCustomId();
+        $book->setCustomId($nextCustomId);
 
        
 
@@ -210,11 +210,8 @@ class ManagementController extends AbstractController
     }
 
     #[Route('/admin/delete-book/{customId}', name: 'admin_delete_book', methods: ['GET'])]
-    public function deleteBook(
-        int $customId, 
-        BookRepository $bookRepository, 
-        EntityManagerInterface $entityManager
-    ): Response {
+    public function deleteBook( int $customId, BookRepository $bookRepository, EntityManagerInterface $entityManager
+        ): Response {
         // Vérifier si l'utilisateur a le rôle ADMIN
         if (!$this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('app_login');
@@ -223,8 +220,7 @@ class ManagementController extends AbstractController
         // Rechercher le livre par customId
         $book = $bookRepository->findOneBy(['customId' => $customId]);
 
-        if (!$book) {
-            // Livre introuvable
+        if (!$book) {           
             $this->addFlash('error', 'Livre introuvable.');
             return $this->redirectToRoute('admin_books_management');
         }

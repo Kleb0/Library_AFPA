@@ -60,4 +60,23 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findNextCustomId(): int
+    {
+        $query = $this->createQueryBuilder('b')
+            ->select('b.customId')
+            ->orderBy('b.customId', 'ASC')
+            ->getQuery();
+    
+        $existingIds = array_column($query->getResult(), 'customId');
+    
+        // Chercher le premier ID disponible
+        $nextId = 1;
+        while (in_array($nextId, $existingIds)) {
+            $nextId++;
+        }
+    
+        return $nextId;
+    }
+    
 }
