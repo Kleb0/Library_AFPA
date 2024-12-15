@@ -4,6 +4,15 @@
 
 {% block body %}
 <div class="container">
+
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <h1>Détails du Livre</h1>
 
     <div class="card mt-4">
@@ -29,9 +38,20 @@
                 </div>
             {% endif %}
         </div>
-        {# <div class="card-footer">
-            <a href="{{ path('admin_books_management') }}" class="btn btn-secondary">Retour à la liste</a>
-        </div> #}
+
+        <div class="card-footer">
+            {% if app.user and app.user.subscriptions|length > 0 and book.isAvailable %}
+                <form method="post" action="{{ path('book_borrow', { customId: book.customId }) }}">
+                        <button type="submit" class="btn btn-primary">Emprunter</button>
+                </form>
+            {% elseif not app.user %}
+                <p class="text-danger">Connectez-vous pour emprunter ce livre.</p>
+            {% elseif app.user.subscriptions|length == 0 %}
+                <p class="text-danger">Vous devez avoir un abonnement actif pour emprunter ce livre.</p>
+            {% elseif not book.isAvailable %}
+                <p class="text-danger">Ce livre n'est pas disponible pour le moment.</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

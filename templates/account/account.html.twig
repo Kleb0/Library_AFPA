@@ -29,5 +29,31 @@
         {% else %}
             <p>Vous n'avez pas d'abonnement actif.</p>
         {% endif %}
+
+        <h2>Livres empruntés</h2>
+        {% if borrowHistory|length > 0 %}
+            <ul>
+                {% for borrow in borrowHistory %}
+                    <li>
+                        <strong>
+                            {% for book in borrow.books %}
+                                {{ book.title }}{% if not loop.last %}, {% endif %}
+                            {% else %}
+                                Aucun livre
+                            {% endfor %}
+                        </strong> <br>                       
+
+                        Emprunté le : {{ borrow.borrowedAt|date('d/m/Y') }} <br>
+                        {% if borrow.returnedAt %}
+                            Rendu le : {{ borrow.returnedAt|date('d/m/Y') }}
+                        {% else %}
+                            <span class="text-danger">Non rendu</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Vous n'avez emprunté aucun livre.</p>
+        {% endif %}
     </div>
 {% endblock %}
