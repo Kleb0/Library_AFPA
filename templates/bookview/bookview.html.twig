@@ -30,7 +30,19 @@
                 {% endfor %}
             </p>
             <p><strong>État :</strong> {{ book.status.name ?? 'Non spécifié' }}</p>
-            <p><strong>Disponible :</strong> {{ book.isAvailable ? 'Oui' : 'Non' }}</p>
+            <p><strong>Disponible :</strong> 
+                {% if book.isAvailable %}
+                    Oui
+                {% else %}
+                    Non 
+                    {% if borrowHistory is defined and borrowHistory.returnedAt is defined %}
+                     <br> <strong>Date de retour prévue :</strong> {{ borrowHistory.returnedAt|date('d/m/Y') }}
+                        
+                    {% else %}
+                        <br>TEST TEST</br>
+                    {% endif %}
+                {% endif %}
+            </p>
 
             {% if book.image %}
                 <div class="mt-4">

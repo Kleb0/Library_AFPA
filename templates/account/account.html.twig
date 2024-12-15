@@ -45,7 +45,7 @@
 
                         Emprunté le : {{ borrow.borrowedAt|date('d/m/Y') }} <br>
                         {% if borrow.returnedAt %}
-                            Rendu le : {{ borrow.returnedAt|date('d/m/Y') }}
+                            A rendre pour le : {{ borrow.returnedAt|date('d/m/Y') }}
                         {% else %}
                             <span class="text-danger">Non rendu</span>
                         {% endif %}
