@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Emprunts{% endblock %}
+
+{% block body %}
+<h1>Gestion des Emprunts</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID Emprunt</th>
+            <th>Utilisateur</th>
+            <th>Livre(s)</th>
+            <th>Date d'emprunt</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for history in borrowHistories %}
+            <tr>
+                <td>{{ history.id }}</td>
+                <td>{{ history.user.username }}</td>
+                <td>
+                    <ul>
+                        {% for book in history.books %}
+                            <li>{{ book.title }} ({{ book.author }})</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ history.borrowedAt|date('d-m-Y') }}</td>
+                <td>
+                    <form action="{{ path('return_book', {'id': history.id}) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-primary" onclick="return confirm('Confirmez-vous la restitution du livre ?');">Restituer</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucun emprunt en cours.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

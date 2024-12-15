@@ -36,10 +36,7 @@
                 {% else %}
                     Non 
                     {% if borrowHistory is defined and borrowHistory.returnedAt is defined %}
-                     <br> <strong>Date de retour prévue :</strong> {{ borrowHistory.returnedAt|date('d/m/Y') }}
-                        
-                    {% else %}
-                        <br>TEST TEST</br>
+                     <br> <strong>Date de retour prévue :</strong> {{ borrowHistory.returnedAt|date('d/m/Y') }}                    
                     {% endif %}
                 {% endif %}
             </p>

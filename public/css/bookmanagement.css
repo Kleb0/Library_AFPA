@@ -5,12 +5,13 @@
     /* scale the container by 90% */
     transform: scale(0.8);
     position: relative;
-    top: -120px;
+    top: -140px;
+    left: -100px;
    
 }
 
 .table td {
-    max-width: 600px;
+    max-width: 700px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
