@@ -36,6 +36,7 @@ class BookViewController extends AbstractController
         // Gestion du formulaire de commentaire
         $comment = new Comment();
         $comment->setBook($book);
+        $comment->setUser($this->getUser()); // Associe l'utilisateur connecté
     
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
@@ -52,6 +53,35 @@ class BookViewController extends AbstractController
             'book' => $book,
             'comments' => $comments,
             'form' => $form->createView(),
-        ]);
+        ]);        
     }
+
+    #[Route('/comment/delete/{id}', name: 'comment_delete', methods: ['POST'])]
+    public function deleteComment(
+        int $id,
+        EntityManagerInterface $em,
+        Request $request
+    ): Response {
+        $comment = $em->getRepository(Comment::class)->find($id);
+
+        if (!$comment) {
+            throw $this->createNotFoundException('Commentaire introuvable.');
+        }
+
+        // Vérifie si l'utilisateur a le rôle admin
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('danger', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            return $this->redirectToRoute('book_view', ['customId' => $comment->getBook()->getCustomId()]);
+        }
+
+        if ($this->isCsrfTokenValid('delete_comment' . $comment->getId(), $request->request->get('_token'))) {
+            $em->remove($comment);
+            $em->flush();
+            $this->addFlash('success', 'Commentaire supprimé avec succès.');
+        }
+
+        return $this->redirectToRoute('book_view', ['customId' => $comment->getBook()->getCustomId()]);
+    }
+
+    
 }
