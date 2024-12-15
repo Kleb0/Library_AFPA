@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -72,6 +73,8 @@ class Book
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->borrowedBooks = new ArrayCollection();
+        $this->borrowHistories = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getCategories(): Collection
@@ -95,8 +98,7 @@ class Book
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Comment::class, inversedBy: 'books')]
-    #[ORM\JoinTable(name: 'book_comment')] // Spécifie le nom de la table de liaison
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
     public function getComments(): Collection
@@ -125,6 +127,37 @@ class Book
 
         return $this;
     }
+
+    #[ORM\ManyToMany(targetEntity: BorrowHistory::class, mappedBy: 'books')]
+    private Collection $borrowHistories;
+
+    public function getBorrowHistories(): Collection
+    {
+        return $this->borrowHistories;
+    }
+
+    public function addBorrowHistory(BorrowHistory $borrowHistory): self
+    {
+        if (!$this->borrowHistories->contains($borrowHistory)) {
+            $this->borrowHistories[] = $borrowHistory;
+            $borrowHistory->addBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBorrowHistory(BorrowHistory $borrowHistory): self
+    {
+        if ($this->borrowHistories->removeElement($borrowHistory)) {
+            $borrowHistory->removeBook($this);
+        }
+
+        return $this;
+    }
+
+
+
+
 
     public function getBorrowedBooks(): Collection
     {

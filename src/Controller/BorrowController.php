@@ -48,6 +48,7 @@ class BorrowController extends AbstractController
 
         // Créer une nouvelle entrée BorrowHistory
         $borrowHistory = new BorrowHistory();
+        $borrowHistory->setUser($user);
         $borrowHistory->setUserId($user->getId());
         $borrowHistory->setBorrowedAt(new \DateTime());
         $borrowHistory->setReturnedAt(new \DateTime('+6 days'));
@@ -79,6 +80,7 @@ class BorrowController extends AbstractController
         $entityManager->persist($borrowHistory);
         $entityManager->flush();
 
+
         $this->addFlash('success', 'Le livre a été emprunté avec succès.');
 
         return $this->render('bookview/bookview.html.twig', [
@@ -86,6 +88,8 @@ class BorrowController extends AbstractController
             'borrowHistory' => $borrowHistory,
             'returnedAt' => $borrowHistory->getReturnedAt(),
         ]);
+
+        
     }
 
 }

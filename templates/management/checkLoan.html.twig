@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification de l'Emprunt{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Vérification de l'Emprunt</h1>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>{{ book.title }}</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Auteur :</strong> {{ book.author }}</p>
+            <p><strong>Résumé :</strong> {{ book.summary }}</p>
+            <p><strong>Catégories :</strong> 
+                {% for category in book.categories %}
+                    {{ category.categoryName }}{% if not loop.last %}, {% endif %}
+                {% else %}
+                    Aucune catégorie
+                {% endfor %}
+            </p>
+
+            <p><strong>Utilisateur :</strong> {{ user.nom }} {{ user.prenom }} (ID: {{ user.id }})</p>
+            <p><strong>Date d'emprunt :</strong> {{ borrowHistory.borrowedAt|date('d/m/Y H:i') }}</p>
+            <p><strong>Date de retour prévue :</strong> {{ borrowHistory.returnedAt|date('d/m/Y H:i') }}</p>
+            <p><strong>Statut :</strong> 
+                {% if status == 'Good' %}
+                    <span class="text-success">À temps</span>
+                {% else %}
+                    <span class="text-danger">En retard</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <a href="{{ path('admin_books_management') }}" class="btn btn-primary mt-3">Retour à la gestion</a>
+</div>
+{% endblock %}

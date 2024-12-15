@@ -18,6 +18,7 @@ use App\Repository\BookRepository;
 use App\Entity\Book;
 use App\Entity\BookStatus;
 use App\Entity\BookCategory;
+use App\Repository\BorrowHistoryRepository;
 
 
 class ManagementController extends AbstractController
@@ -235,6 +236,57 @@ class ManagementController extends AbstractController
         // Rediriger vers la liste des livres
         return $this->redirectToRoute('admin_books_management');
     }
+
+    #[Route('/admin/check-loan/{customId}', name: 'admin_check_loan', methods: ['GET'])]
+    public function checkLoan(
+        int $customId, 
+        BookRepository $bookRepository, 
+        BorrowHistoryRepository $borrowHistoryRepository
+    ): Response {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Récupérer le livre
+        $book = $bookRepository->findOneBy(['customId' => $customId]);
+
+        if (!$book) {
+            $this->addFlash('error', 'Livre introuvable.');
+            return $this->redirectToRoute('admin_books_management');
+        }
+
+        // Récupérer l'historique de l'emprunt
+        $borrowHistory = $borrowHistoryRepository->createQueryBuilder('bh')
+            ->join('bh.books', 'b')
+            ->where('b.customId = :customId')
+            ->setParameter('customId', $customId)
+            ->orderBy('bh.borrowedAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$borrowHistory) {
+            $this->addFlash('error', 'Aucun historique d\'emprunt trouvé pour ce livre.');
+            return $this->redirectToRoute('admin_books_management');
+        }
+
+        // Vérifier si le livre a été remis à temps
+        $returnedAt = $borrowHistory->getReturnedAt();
+        $borrowedAt = $borrowHistory->getBorrowedAt();
+        $now = new \DateTime();
+
+        // État du retour
+        $status = $returnedAt >= $now ? 'Good' : 'En retard';
+
+        // Rendu de la vue
+        return $this->render('management/checkLoan.html.twig', [
+            'book' => $book,
+            'borrowHistory' => $borrowHistory,
+            'status' => $status,
+            'user' => $borrowHistory->getUser(),
+        ]);
+    }
+
 
 
 

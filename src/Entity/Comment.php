@@ -21,10 +21,6 @@ class Comment
 
     #[ORM\Column(type: 'text')]
     private ?string $comment = null;
-
-    #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: 'comments')]
-    private Collection $books;
-
     public function __construct()
     {
         $this->books = new ArrayCollection();
@@ -59,26 +55,7 @@ class Comment
         return $this;
     }
 
-    public function getBooks(): Collection
-    {
-        return $this->books;
-    }
 
-    public function addBook(Book $book): self
-    {
-        if (!$this->books->contains($book)) {
-            $this->books->add($book);
-        }
-
-        return $this;
-    }
-
-    public function removeBook(Book $book): self
-    {
-        $this->books->removeElement($book);
-
-        return $this;
-    }
 }
 
 

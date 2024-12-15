@@ -3,7 +3,7 @@
 {% block title %}Gestion des Livres{% endblock %}
 
     {% block body %}
-    <div class="container">
+    <div class="management-container">
         <h1>Gestion des Livres</h1>
         <table class="table">
 
@@ -39,9 +39,14 @@
                         <a href="{{ path('admin_delete_book', {'customId': book.customId}) }}" class="btn btn-danger">Supprimer</a>
                         <a class="btn btn-warning">Modifier</a>
                         <a href="{{ path('book_view', {'customId': book.customId}) }}" class="btn btn-info">Voir</a>
+                        {% if not book.isAvailable %}
+                            <a href="{{ path('admin_check_loan', {'customId': book.customId}) }}" class="btn btn-secondary">Vérifier l'emprunt</a>
+                        {% endif %}
                     </td>
 
                 </tr>
+
+                
             {% else %}
                 <tr>
                     <td colspan="7">Aucun livre trouvé.</td>

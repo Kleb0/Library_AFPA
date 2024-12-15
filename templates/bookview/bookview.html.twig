@@ -51,6 +51,29 @@
             {% endif %}
         </div>
 
+        <div class="mt-4">
+            <h3>Commentaires</h3>
+            {% for comment in comments %}
+                <div class="border p-2 my-2">
+                    <strong>{{ comment.id }} :</strong>
+                    <p>{{ comment.comment }}</p>
+                </div>
+            {% else %}
+                <p>Aucun commentaire pour le moment.</p>
+            {% endfor %}
+        </div>
+
+        {% if app.user %}
+            <h3>Ajouter un commentaire</h3>
+            {{ form_start(form) }}
+                {{ form_row(form.comment) }}
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            {{ form_end(form) }}
+        {% else %}
+            <p class="text-danger">Connectez-vous pour déposer un commentaire.</p>
+        {% endif %}
+
+
         <div class="card-footer">
             {% if app.user and app.user.subscriptions|length > 0 and book.isAvailable %}
                 <form method="post" action="{{ path('book_borrow', { customId: book.customId }) }}">
