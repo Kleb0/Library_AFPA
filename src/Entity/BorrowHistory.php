@@ -19,6 +19,7 @@ class BorrowHistory
     private $userId;
 
     #[ORM\ManyToMany(targetEntity: Book::class)]
+    #[ORM\JoinTable(name: 'borrow_history_book')]
     private $books;
 
     #[ORM\Column(type: 'datetime')]
