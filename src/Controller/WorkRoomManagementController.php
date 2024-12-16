@@ -83,6 +83,8 @@ class WorkRoomManagementController extends AbstractController
         return $this->redirectToRoute('workrooms_management');
     }
 
+
+
    
 
     #[Route('/management/workrooms/reserve/{id}', name: 'workroom_reserve')]
@@ -180,8 +182,6 @@ class WorkRoomManagementController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
-
     #[Route('/workrooms/reservation', name: 'workrooms_reservation')]
     public function reservationList(WorkRoomRepository $workRoomRepository): Response
     {
@@ -215,6 +215,47 @@ class WorkRoomManagementController extends AbstractController
             'user' => $user,
             'reservations' => $reservations,
             'borrowHistory' => $borrowHistory,
+        ]);
+    }
+
+    #[Route('/management/workrooms/edit/{id}', name: 'workroom_edit')]
+    public function edit(
+        Request $request,
+        WorkRoomRepository $workRoomRepository,
+        EntityManagerInterface $entityManager,
+        int $id
+    ): Response {
+        // Récupérer la salle à éditer
+        $workRoom = $workRoomRepository->find($id);
+    
+        if (!$workRoom) {
+            $this->addFlash('danger', 'La salle à modifier est introuvable.');
+            return $this->redirectToRoute('workrooms_management');
+        }
+    
+        $form = $this->createForm(WorkRoomType::class, $workRoom);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Vérification des dates et des heures
+            $startDate = $workRoom->getStartReservationDate();
+            $endDate = $workRoom->getEndReservationDate();
+    
+            if ($startDate > $endDate) {
+                $this->addFlash('danger', 'La date de début doit être avant la date de fin.');
+            } elseif ($workRoom->getMinReservationTime() >= $workRoom->getMaxReservationTime()) {
+                $this->addFlash('danger', 'L\'heure minimale doit être antérieure à l\'heure maximale.');
+            } else {
+                // Mise à jour de la salle
+                $entityManager->flush();
+                $this->addFlash('success', 'La salle a été mise à jour.');
+                return $this->redirectToRoute('workrooms_management');
+            }
+        }
+    
+        return $this->render('management/editWorkRoom.html.twig', [
+            'form' => $form->createView(),
+            'workRoom' => $workRoom,
         ]);
     }
 

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Salle de Travail{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    {# Messages flash #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="row">
+        {# Colonne : Formulaire de modification #}
+        <div class="col-md-12">
+            <h2 class="mb-4">Modifier la Salle {{ workRoom.customId }}</h2>
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Modifier les informations de la salle</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'action': path('workrooms_management') ~ '?edit=' ~ workRoom.id, 'method': 'POST'}) }}
+                        <div class="mb-3">
+                            {{ form_row(form.maxCapacity, {'label': 'Capacité maximale'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.equipment, {'label': 'Équipements disponibles'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.startReservationDate, {'label': 'Date de début'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.endReservationDate, {'label': 'Date de fin'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.excludedDays, {'label': 'Jours exclus'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.minReservationTime, {'label': 'Heure minimale'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.maxReservationTime, {'label': 'Heure maximale'}) }}
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Mettre à jour la salle</button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

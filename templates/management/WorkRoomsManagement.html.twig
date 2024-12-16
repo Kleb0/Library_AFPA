@@ -33,7 +33,7 @@
                             à {{ room.maxReservationTime|date('H:i') }}
                         </p>
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-primary btn-sm me-2">Modifier</a>
+                            <a href="{{ path('workroom_edit', {id: room.id}) }}" class="btn btn-primary btn-sm me-2">Modifier</a>
                             <a href="{{ path('workroom_delete', {id: room.id}) }}" class="btn btn-danger btn-sm"
                                onclick="return confirm('Voulez-vous vraiment supprimer cette salle ?');">Supprimer</a>
                         </div>
@@ -77,11 +77,19 @@
                         <div class="mb-3">
                             {{ form_row(form.maxReservationTime, {'label': 'Heure maximale'}) }}
                         </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success">
-                                {% if editRoomId %}Mettre à jour{% else %}Créer{% endif %}
+                    {# Partie du formulaire de création ou de modification #}
+                    <div class="d-grid">
+                        {# Le bouton "Modifier" est toujours affiché si une salle est en édition #}
+                        {% if editRoomId %}
+                            <button type="submit" class="btn btn-primary">
+                                Mettre à jour la salle
                             </button>
-                        </div>
+                        {% else %}
+                            <button type="submit" class="btn btn-success">
+                                Créer la salle
+                            </button>
+                        {% endif %}
+                    </div>
                     {{ form_end(form) }}
                 </div>
             </div>

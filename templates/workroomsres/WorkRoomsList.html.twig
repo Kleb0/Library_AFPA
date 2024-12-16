@@ -19,7 +19,7 @@
                 </div>
             </div>
         {% else %}
-        <div class="alert alert-warning">Aucune salle disponible pour réservation.</div>
+        <div class="alert alert-warning"> la salle {{ room.customId }} n'est plus disponible pour la réservation.</div>
         {% endif %}
     {% else %}
         <div class="alert alert-warning">Aucune salle disponible pour réservation.</div>
