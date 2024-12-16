@@ -2,9 +2,11 @@
 
 namespace App\Form;
 
+use App\Validator\StrongPassword;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -38,10 +40,33 @@ class UserType extends AbstractType
                 'label' => 'Adresse email',
                 'required' => true,
             ])
-            ->add('password', PasswordType::class, [
-                'label' => 'Mot de passe',
+
+
+            // Cette partie du forme servira à confirmer le mot de passe au moyen de la classe RepeatedType de Symfony et en utilisant un validateur StrongPassword
+
+            ->add('password', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'first_options' => [
+                    'label' => 'Mot de passe',
+                    'attr' => ['placeholder' => 'Entrez votre mot de passe'],
+                    'constraints' => [
+                        new Assert\Length([
+                            'min' => 8,
+                            'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères.',
+                        ]),
+                        new StrongPassword(),
+                    ],                                               
+                ],
+                'second_options' => [
+                    'label' => 'Confirmer le mot de passe',
+                    'attr' => ['placeholder' => 'Confirmez votre mot de passe'],
+                ],
+                'invalid_message' => 'Les mots de passe ne correspondent pas.',
                 'required' => true,
             ])
+
+
+        
             ->add('adresse', TextType::class, [
                 'label' => 'Adresse',
                 'required' => true,

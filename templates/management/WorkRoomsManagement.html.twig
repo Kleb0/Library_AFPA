@@ -15,7 +15,7 @@
     {% endfor %}
 
     <div class="row">
-        {# Colonne : Liste des salles #}
+       
         <div class="col-md-8">
             <h2 class="mb-4">Liste des salles</h2>
             {% for room in rooms %}
@@ -46,7 +46,7 @@
             {% endfor %}
         </div>
 
-        {# Colonne : Formulaire de création/modification #}
+        
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-success text-white">
@@ -77,7 +77,7 @@
                         <div class="mb-3">
                             {{ form_row(form.maxReservationTime, {'label': 'Heure maximale'}) }}
                         </div>
-                    {# Partie du formulaire de création ou de modification #}
+                   
                     <div class="d-grid">
                         {# Le bouton "Modifier" est toujours affiché si une salle est en édition #}
                         {% if editRoomId %}

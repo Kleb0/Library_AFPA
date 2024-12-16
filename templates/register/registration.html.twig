@@ -62,10 +62,26 @@
         {{ form_widget(form.ville, {'attr': {'class': 'form-control'}}) }}
         {{ form_errors(form.ville) }}
     </div>
+
     <div class="form-group">
-        {{ form_label(form.password) }}
-        {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
-        {{ form_errors(form.password) }}
+        {{ form_label(form.password.first) }}
+        {{ form_widget(form.password.first, {'attr': {'class': 'form-control'}}) }}
+        <div class="form-errors">
+            {{ form_errors(form.password.first) }} {# Affiche les erreurs pour "password.first" #}
+        </div>
+        
+ 
+        <div class="password-strength-bar">
+            <div class="strength-section weak"></div>
+            <div class="strength-section medium"></div>
+            <div class="strength-section strong"></div>
+        </div>
+    </div>
+
+ <div class="form-group">
+        {{ form_label(form.password.second) }} {# Deuxième champ de mot de passe (confirmation) #}
+        {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.password.second) }}
     </div>
 
     {# Champ pour la photo de profil #}
@@ -80,4 +96,50 @@
     
     {{ form_end(form) }}
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const passwordInput = document.querySelector('#{{ form.password.first.vars.id }}');
+    const strengthBar = document.querySelector('.password-strength-bar');
+    const strengthSections = document.querySelectorAll('.strength-section');
+
+    passwordInput.addEventListener('input', function () {
+        const password = passwordInput.value;
+
+        // Affiche la barre de force lorsque le mot de passe commence à être saisi
+        if (password.length > 0) {
+            strengthBar.style.visibility = 'visible';
+        } else {
+            strengthBar.style.visibility = 'hidden';
+        }
+
+        // Déterminer la force du mot de passe
+        const strength = checkPasswordStrength(password);
+
+        // Réinitialiser les classes actives et appliquer progressivement
+        strengthSections.forEach((section, index) => {
+            section.classList.remove('active');
+            if (index < strength) {
+                section.classList.add('active'); // Active les sections jusqu'à la force déterminée
+            }
+        });
+    });
+
+    // Fonction pour vérifier la force du mot de passe
+    function checkPasswordStrength(password) {
+        let strength = 0;
+
+        if (/[a-z]/.test(password)) strength++; // Lettres
+        if (/[A-Z]/.test(password)) strength++; // Majuscules
+        if (/[0-9]/.test(password)) strength++; // Chiffres
+        if (/[\W_]/.test(password)) strength++; // Caractères spéciaux
+
+        return Math.min(strength, 3); // Retourne un max de 3 pour éviter les erreurs
+    }
+});
+
+</script>
+
 {% endblock %}

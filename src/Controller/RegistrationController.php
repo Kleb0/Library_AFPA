@@ -56,8 +56,9 @@ class RegistrationController extends AbstractController
             }
 
 
+            //Attribution du rôle, par défaut on initialise l'utilisateur avec le rôle 'ROLE_USER' soit le roleId 1 (sachant qu'on a déjà un role 'Admin')
             $roleRepository = $entityManager->getRepository(Role::class);
-            $role = $roleRepository->findOneBy(['roleId' => '2']);
+            $role = $roleRepository->findOneBy(['roleId' => '1']);
 
             if($role)
             {
@@ -75,6 +76,7 @@ class RegistrationController extends AbstractController
             // Hashage du mot de passe
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
+                //Symfony gère déjà la validation des mots de passe automatiquement
                 $user->getPassword()
             );
             $user->setPassword($hashedPassword);
