@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver une Salle{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4">Salles disponibles</h2>
+
+    {% for room in rooms %}
+        {% if room.available %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Salle {{ room.customId }}</h5>
+                    <p>
+                        <strong>Plage de réservation :</strong> {{ room.startReservationDate|date('Y-m-d') }} au {{ room.endReservationDate|date('Y-m-d') }}<br>
+                        <strong>Heure de réservation :</strong> {{ room.minReservationTime|date('H:i') }} - {{ room.maxReservationTime|date('H:i') }}
+                    </p>
+                    <a href="{{ path('workroom_reserve', {id: room.id}) }}" class="btn btn-primary">Réserver</a>
+                </div>
+            </div>
+        {% else %}
+        <div class="alert alert-warning">Aucune salle disponible pour réservation.</div>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-warning">Aucune salle disponible pour réservation.</div>
+    {% endfor %}
+</div>
+{% endblock %}

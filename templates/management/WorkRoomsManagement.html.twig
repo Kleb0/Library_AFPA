@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Salles de Travail{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    {# Messages flash #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="row">
+        {# Colonne : Liste des salles #}
+        <div class="col-md-8">
+            <h2 class="mb-4">Liste des salles</h2>
+            {% for room in rooms %}
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Salle {{ room.customId }}</h5>
+                        <p class="card-text">
+                            <strong>Capacité :</strong> {{ room.maxCapacity }}<br>
+                            <strong>Équipements :</strong> {{ room.equipment | join(', ') }}<br>
+                            <strong>Plage de réservation :</strong> 
+                            {{ room.startReservationDate|date('Y-m-d') }} au {{ room.endReservationDate|date('Y-m-d') }}<br>
+                            <strong>Jours exclus :</strong> 
+                            {{ room.excludedDays ? room.excludedDays|join(', ') : 'Aucun' }}<br>
+                            <strong>Heure de réservation :</strong> de {{ room.minReservationTime|date('H:i') }} 
+                            à {{ room.maxReservationTime|date('H:i') }}
+                        </p>
+                        <div class="d-flex justify-content-end">
+                            <a class="btn btn-primary btn-sm me-2">Modifier</a>
+                            <a href="{{ path('workroom_delete', {id: room.id}) }}" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Voulez-vous vraiment supprimer cette salle ?');">Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    Aucune salle de travail disponible pour le moment.
+                </div>
+            {% endfor %}
+        </div>
+
+        {# Colonne : Formulaire de création/modification #}
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        {% if editRoomId %}Modifier la salle{% else %}Créer une nouvelle salle{% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'action': path('workrooms_management'), 'method': 'POST'}) }}
+                        <div class="mb-3">
+                            {{ form_row(form.maxCapacity, {'label': 'Capacité maximale'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.equipment, {'label': 'Équipements disponibles'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.startReservationDate, {'label': 'Date de début'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.endReservationDate, {'label': 'Date de fin'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.excludedDays, {'label': 'Jours exclus'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.minReservationTime, {'label': 'Heure minimale'}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.maxReservationTime, {'label': 'Heure maximale'}) }}
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                {% if editRoomId %}Mettre à jour{% else %}Créer{% endif %}
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

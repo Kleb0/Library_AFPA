@@ -7,10 +7,16 @@
             {% if app.user %}
 
                 <a href="{{ path('app_subscriptions') }}" class="navbar-link">S'abonner</a>
+                {% if app.user.subscriptions|length > 0 %}
+                    <a href="{{ path('workrooms_reservation') }}" class="navbar-link">Réserver salle d'étude</a>
+                {% else %}
+
+                {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('admin_users_management') }}" class="navbar-link">Gestion utilisateurs</a>
                     <a href="{{ path('admin_books_management') }}" class="navbar-link">Gestion Livres</a>
-                    <a> Gestion salles de travail </a>
+                    <a href="{{ path('workrooms_management') }}" class="navbar-link">Gestion salle d'études</a>
+
                     
                 {% endif %}
 

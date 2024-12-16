@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\WorkRoom;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -84,6 +85,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->subscriptions = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
+        $this->reservedRooms = new ArrayCollection();
     }
 
     public function getSubscriptions(): Collection
@@ -114,6 +117,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSubscription(?Subscription $subscription): self
     {
         $this->subscription = $subscription;
+
+        return $this;
+    }
+
+    #[ORM\ManyToMany(targetEntity: WorkRoom::class, inversedBy: "users")]
+    #[ORM\JoinTable(name: "reserved_room")]
+    private Collection $reservedRooms;
+
+    public function getReservedRooms(): Collection
+    {
+        return $this->reservedRooms;
+    }
+
+    public function addReservedRoom(WorkRoom $room): self
+    {
+        if (!$this->reservedRooms->contains($room)) {
+            $this->reservedRooms->add($room);
+        }
+
+        return $this;
+    }
+
+    public function removeReservedRoom(WorkRoom $room): self
+    {
+        $this->reservedRooms->removeElement($room);
 
         return $this;
     }

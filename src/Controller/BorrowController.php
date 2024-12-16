@@ -66,6 +66,7 @@ class BorrowController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Le livre a été emprunté avec succès.');
+        $borrowHistory = $borrowHistoryRepository->findOneBy(['user' => $user, 'returnedAt' => null]);
 
         //on passe les commentaires, et le formulaire à la vue, qui récupèrera les données liées
         $comments = $book->getComments();

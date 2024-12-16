@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver une Salle{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4">Réserver la Salle {{ room.customId }}</h2>
+
+    <p>
+        <strong>Plage de réservation :</strong> {{ room.startReservationDate|date('Y-m-d') }} au {{ room.endReservationDate|date('Y-m-d') }}<br>
+        <strong>Heure de réservation :</strong> de {{ room.minReservationTime|date('H:i') }} à {{ room.maxReservationTime|date('H:i') }}<br>
+        <strong>Jours non disponibles :</strong> {{ room.excludedDays ? room.excludedDays|join(', ') : 'Aucun' }}<br>
+        <strong>Capacité maximale :</strong> {{ room.maxCapacity }} personnes
+    </p>
+
+
+    {# Affichage des messages flash #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+{{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_row(form.reservationDate) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.minReservationTime) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.maxReservationTime) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.numberOfPeople) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Réserver</button>
+    {{ form_end(form) }}
+{% endblock %}

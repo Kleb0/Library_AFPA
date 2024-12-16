@@ -1,9 +1,11 @@
 .Container-catalogue{
-    background-color: #00a2ff;
+    background-color: #eef3f5;
     width: 80%;
     margin-left: 10%;
     padding: 20px;
     box-sizing: border-box;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 
 }
 

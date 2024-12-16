@@ -1,36 +1,31 @@
-{% extends 'base.html.twig' %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/account.css') }}">
-{% endblock %}
+ {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Mon compte</h1>
-    <div class="profile-container">
-        {% if app.user.imageProfil %}
-            <img src="{{ asset('uploads/profile_images/' ~ app.user.imageProfil) }}" alt="Photo de profil" class="profile-image">
-        {% else %}
-            <p>Aucune image de profil.</p>
-        {% endif %}
-        <p>Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}.</p>
-        <p>Email : {{ app.user.email }}</p>
-        <p>Adresse : {{ app.user.adresse }}</p>
-        <p>Ville : {{ app.user.ville }}</p>
-        <p>Code postal : {{ app.user.codePostal }}</p>
-        <p>Rôle : {{ app.user.rolename }}</p>
+<h1>Mon compte</h1>
+<div class="profile-container">
+    {% if app.user.imageProfil %}
+        <img src="{{ asset('uploads/profile_images/' ~ app.user.imageProfil) }}" alt="Photo de profil" class="profile-image">
+    {% else %}
+        <p>Aucune image de profil.</p>
+    {% endif %}
+    <p>Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}.</p>
+    <p>Email : {{ app.user.email }}</p>
+    <p>Adresse : {{ app.user.adresse }}</p>
+    <p>Ville : {{ app.user.ville }}</p>
+    <p>Code postal : {{ app.user.codePostal }}</p>
+    <p>Rôle : {{ app.user.rolename }}</p>
 
-        <h2>Votre abonnement</h2>
-        {% if app.user.subscriptions|length > 0 %}
-            {% for subscription in app.user.subscriptions %}
-                <p>{{ subscription.name }} ({{ subscription.type }}) - {{ subscription.price }} €</p>
-            {% endfor %}
-            <a href="{{ path('app_unsubscribe') }}" class="btn btn-danger">Résilier l'abonnement</a>
-        {% else %}
-            <p>Vous n'avez pas d'abonnement actif.</p>
-        {% endif %}
+    <h2>Votre abonnement</h2>
+    {% if app.user.subscriptions|length > 0 %}
+        {% for subscription in app.user.subscriptions %}
+            <p>{{ subscription.name }} ({{ subscription.type }}) - {{ subscription.price }} €</p>
+        {% endfor %}
+        <a href="{{ path('app_unsubscribe') }}" class="btn btn-danger">Résilier l'abonnement</a>
+    {% else %}
+        <p>Vous n'avez pas d'abonnement actif.</p>
+    {% endif %}
 
-        <h2>Livres empruntés</h2>
+    <h2>Livres empruntés</h2>
         {% if borrowHistory|length > 0 %}
             <ul>
                 {% for borrow in borrowHistory %}
@@ -55,5 +50,21 @@
         {% else %}
             <p>Vous n'avez emprunté aucun livre.</p>
         {% endif %}
-    </div>
+
+    <h2>Vos réservations</h2>
+    {% if reservations|length > 0 %}
+        <ul>
+            {% for reservation in reservations %}
+                <li>
+                    <strong>Salle : {{ reservation.workRoom.customId }}</strong><br>
+                    Date : {{ reservation.reservationDate|date('d/m/Y') }}<br>
+                    Horaires : {{ reservation.startTime|date('H:i') }} - {{ reservation.endTime|date('H:i') }}<br>
+                    Nombre de personnes : {{ reservation.numberOfPeople }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Vous n'avez aucune réservation.</p>
+    {% endif %}
+</div>
 {% endblock %}
