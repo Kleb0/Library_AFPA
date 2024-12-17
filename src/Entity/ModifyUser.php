@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity]
 class ModifyUser
@@ -34,7 +36,63 @@ class ModifyUser
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private ?string $codePostal = null;
 
+
+    #[ORM\OneToMany(targetEntity: ModifiedProfileImage::class, mappedBy: 'modifyUser', cascade: ['persist', 'remove'])]
+    private Collection $images;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $new_password = null;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
+
+
     // Getters et setters
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(ModifiedProfileImage $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setModifyUser($this);
+        }
+        return $this;
+    }
+
+    public function removeImage(ModifiedProfileImage $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            if ($image->getModifyUser() === $this) {
+                $image->setModifyUser(null);
+            }
+        }
+        return $this;
+    }
+        
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->new_password;
+    }
+
+    public function setPassword(?string $new_password): self
+    {
+        $this->password = $new_password;
+
+        return $this;
+    }
 
     public function getId(): ?int
     {

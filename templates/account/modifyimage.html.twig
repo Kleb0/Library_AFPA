@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'image de profil{% endblock %}
+
+{% block body %}
+    <h1>Modifier votre image de profil</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.image) }}
+        <button class="btn btn-primary" type="submit">Mettre à jour</button>
+    {{ form_end(form) }}
+{% endblock %}
