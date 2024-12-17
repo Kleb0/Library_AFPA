@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un Livre{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Modifier le Livre : {{ book.title }}</h1>
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_row(form.title) }}
+            {{ form_row(form.author) }}
+            {{ form_row(form.summary) }}
+            {{ form_row(form.status) }}
+            {{ form_row(form.categories) }}
+            {{ form_row(form.image) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier</button>
+        <a href="{{ path('admin_books_management') }}" class="btn btn-secondary">Retour</a>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

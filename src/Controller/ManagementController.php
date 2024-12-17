@@ -237,6 +237,79 @@ class ManagementController extends AbstractController
         return $this->redirectToRoute('admin_books_management');
     }
 
+    #[Route('/admin/edit-book/{id}', name: 'admin_edit_book')]
+    public function editBook(
+        int $id, 
+        Request $request, 
+        BookRepository $bookRepository, 
+        EntityManagerInterface $entityManager
+    ): Response {
+        // Récupérer le livre via customId
+        $book = $bookRepository->findOneBy(['customId' => $id]);
+
+        if (!$book) {
+            $this->addFlash('error', 'Livre introuvable.');
+            return $this->redirectToRoute('admin_books_management');
+        }
+
+        // Création du formulaire
+        $form = $this->createFormBuilder($book)
+            ->add('title', TextType::class, ['label' => 'Titre'])
+            ->add('author', TextType::class, ['label' => 'Auteur'])
+            ->add('summary', TextType::class, ['label' => 'Résumé', 'required' => false])
+            ->add('status', EntityType::class, [
+                'class' => BookStatus::class,
+                'choice_label' => 'name',
+                'label' => 'État du livre',
+                'placeholder' => 'Choisir un état'
+            ])
+            ->add('categories', EntityType::class, [
+                'class' => BookCategory::class,
+                'choice_label' => 'categoryName',
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Catégories'
+            ])
+            ->add('image', FileType::class, [
+                'label' => 'Nouvelle Image (optionnel)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => ['image/jpeg', 'image/png'],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide.',
+                    ]),
+                ],
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Modifier le livre'])
+            ->getForm();
+
+        // Traitement du formulaire
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+                $imageFile->move($this->getParameter('book_image_directory'), $newFilename);
+                $book->setImage('/uploads/book_images/' . $newFilename);
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Le livre a été modifié avec succès.');
+
+            return $this->redirectToRoute('admin_books_management');
+        }
+
+        return $this->render('management/editbook.html.twig', [
+            'form' => $form->createView(),
+            'book' => $book
+        ]);
+    }
+
+
+
+
     #[Route('/admin/check-loan/{customId}', name: 'admin_check_loan', methods: ['GET'])]
     public function checkLoan(
         int $customId, 
