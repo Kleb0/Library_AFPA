@@ -19,10 +19,8 @@ class BookViewController extends AbstractController
     public function bookView(
         int $customId, 
         BookRepository $bookRepository, 
-        BorrowHistoryRepository $borrowHistoryRepository, 
         EntityManagerInterface $em, 
         Request $request, 
-        Connection $connection
     ): Response {
         $book = $bookRepository->findOneBy(['customId' => $customId]);
     
@@ -32,28 +30,44 @@ class BookViewController extends AbstractController
     
         // Récupération des commentaires
         $comments = $book->getComments();
+
+        // initialisation du formulaire
+        $form = null;
     
         // Gestion du formulaire de commentaire
-        $comment = new Comment();
-        $comment->setBook($book);
-        $comment->setUser($this->getUser()); // Associe l'utilisateur connecté
+      
+
+        // if ($this->getUser()) { // Vérifie si l'utilisateur est connecté
+        //     $comment->setUser($this->getUser()); // Associe l'utilisateur connecté
+        // } else {
+        //     $this->addFlash('danger', 'Vous devez être connecté pour ajouter un commentaire.');
+        //     return $this->redirectToRoute('app_login'); // Redirige vers la page de connexion
+        // }
     
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($comment);
-            $em->flush();
-            $this->addFlash('success', 'Votre commentaire a été ajouté.');
-            return $this->redirectToRoute('book_view', ['customId' => $customId]);
+            if($this->getUser())
+            {
+                $comment = new Comment();
+                $comment->setBook($book);
+                $comment->setUser($this->getUser());
+                $form = $this->createForm(CommentType::class, $comment);
+                $form->handleRequest($request);
+        
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em->persist($comment);
+                $em->flush();
+                $this->addFlash('success', 'Votre commentaire a été ajouté.');
+                return $this->redirectToRoute('book_view', ['customId' => $customId]);
+            }
         }
-    
-        // Rendu de la vue
-        return $this->render('bookview/bookview.html.twig', [
+
+           // Rendu de la vue
+           return $this->render('bookview/bookview.html.twig', [
             'book' => $book,
             'comments' => $comments,
-            'form' => $form->createView(),
-        ]);        
+            'form' => $form ? $form->createView() : null,
+        ]); 
+
+               
     }
 
     #[Route('/comment/delete/{id}', name: 'comment_delete', methods: ['POST'])]

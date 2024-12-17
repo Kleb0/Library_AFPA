@@ -9,10 +9,16 @@ parameters:
     book_image_directory: '%kernel.project_dir%/public/uploads/book_images'
     
 services:
+    
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # Ajout explicite du contrôleur ProfileController
+    App\Controller\ProfileController:
+        arguments:
+            $security: '@security.helper'  # Injecter explicitement le service security.helper
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
