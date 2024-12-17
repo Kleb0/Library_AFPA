@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmer vos informations{% endblock %}
+
+{% block body %}
+<div class="registration-container">
+    <h1>Confirmation des modifications</h1>
+    <p>Veuillez confirmer vos informations en saisissant votre mot de passe.</p>
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" name="password" id="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Confirmer</button>
+    </form>
+</div>
+{% endblock %}

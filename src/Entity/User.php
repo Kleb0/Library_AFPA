@@ -66,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     
 
-    private $imageProfil;
+    private ?string $imageProfil = null;
 
     #[ORM\Column(type: "string", length: 50, nullable: true)]
     private $rolename;

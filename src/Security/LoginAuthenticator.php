@@ -6,12 +6,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Doctrine\ORM\EntityManagerInterface;
 
 class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -20,10 +24,17 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     public const LOGIN_ROUTE = 'app_login';
 
     private RouterInterface $router;
+    private EventDispatcherInterface $eventDispatcher;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(RouterInterface $router)
-    {
+    public function __construct(
+        RouterInterface $router,
+        EventDispatcherInterface $eventDispatcher,
+        EntityManagerInterface $entityManager
+    ) {
         $this->router = $router;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -34,11 +45,10 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $email = $request->request->get('email'); // Récupération de l'email depuis le formulaire
         $password = $request->request->get('_password'); // Récupération du mot de passe depuis le formulaire
 
-        if (!$email) {
-            throw new \InvalidArgumentException('L\'email est obligatoire pour l\'authentification.');
+        if (!$email || !$password) {
+            throw new \InvalidArgumentException('Email et mot de passe sont requis pour l\'authentification.');
         }
 
-        // Retourne un Passport avec UserBadge et PasswordCredentials
         return new Passport(
             new UserBadge($email), // Identifiant utilisateur (email)
             new PasswordCredentials($password) // Vérification du mot de passe
@@ -50,11 +60,18 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $user = $token->getUser();
+
+        // Dispatch de l'événement security.interactive_login
+        $event = new InteractiveLoginEvent($request, $token);
+        $this->eventDispatcher->dispatch($event);
+
+        // Redirection après authentification réussie
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath); // Redirection vers la page cible
+            return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->router->generate('app_home')); // Redirection par défaut
+        return new RedirectResponse($this->router->generate('app_home')); // Page par défaut après connexion
     }
 
     /**
